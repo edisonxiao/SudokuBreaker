@@ -46,13 +46,16 @@ public class SudokuBreaker {
 	}
 
 	private void solve() {
-		bruteForce();
+		exclusionAlgo();
+		System.out.printf("iteration %d Exclusion:\n", iterations);
 		printGrid();
-		outcast();
+		outcastAlgo();
+		System.out.printf("iteration %d Outcast:\n", iterations);
+
 		printGrid();
 	}
 
-	private void bruteForce() {
+	private void exclusionAlgo() {
 		getNextGap();
 		while (currCol != -1) {
 			numUniverse.get(getSeqNum(currRow, currCol)).removeAll(
@@ -75,7 +78,7 @@ public class SudokuBreaker {
 		}
 	}
 
-	private void outcast() {
+	private void outcastAlgo() {
 		// row outcast
 		for (int r = 0; r < 9; r++) {
 			rowOutcast(r);
@@ -269,7 +272,7 @@ public class SudokuBreaker {
 	}
 
 	private void printGrid() {
-		System.out.printf("iteration %d:\n", iterations);
+//		System.out.printf("iteration %d:\n", iterations);
 		for (int r = 0; r < 9; r++) {
 			if (r % 3 == 0) {
 				System.out.println("----------------------");
@@ -293,7 +296,7 @@ public class SudokuBreaker {
 
 		Scanner sc = new Scanner(System.in);
 		System.out
-				.println("please enter the numbers in a row. Use zero to represent gaps. Hit enter when finish one row.");
+				.println("Please enter the numbers in a row. Use zero to represent gaps. Do not put anything between numbers. \nHit Enter when finish one row. After finishing all the rows, type q, and then press enter");
 		int row = 0;
 		while (sc.hasNext()) {
 			String rowNum = sc.next();
