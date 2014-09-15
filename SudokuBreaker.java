@@ -80,6 +80,8 @@ public class SudokuBreaker {
 			}
 
 			if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 0) {
+				System.out.println("reverse backtracking");
+				reverse();
 				throw new IllegalArgumentException("Something is wrong");
 			}
 			getNextGap();
@@ -320,12 +322,16 @@ public class SudokuBreaker {
 
 	private Integer[][] cloneGrid(Integer[][] g1) {
 		Integer[][] ret = new Integer[9][9];
+		copyGrid(g1, ret);
+		return ret;
+	}
+	
+	private void copyGrid(Integer[][] g1, Integer[][] g2){
 		for (int r = 0; r < 9; r++) {
 			for (int c = 0; c < 9; c++) {
-				ret[r][c] = g1[r][c];
+				g2[r][c] = g1[r][c];
 			}
 		}
-		return ret;
 	}
 	
 	private ArrayList<HashSet<Integer>> cloneNumUniv(ArrayList<HashSet<Integer>> numUniv){
@@ -346,6 +352,16 @@ public class SudokuBreaker {
 			}
 		}
 		return false;
+	}
+	
+	private void reverse(){
+		HashMap<Integer[][], ArrayList<HashSet<Integer>>> ss = snapshots.pop();
+		Integer[] ae = attemptedElements.pop();
+		for(Integer[][] myGrid : ss.keySet()){
+			copyGrid(grid, myGrid);
+			ss.get(myGrid).get(ae[0]).remove(ae[1]);
+			numUniverse = ss.get(myGrid);
+		}
 	}
 
 	private void printGrid() {
