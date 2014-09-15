@@ -82,7 +82,8 @@ public class SudokuBreaker {
 			if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 0) {
 				System.out.println("reverse backtracking");
 				reverse();
-				throw new IllegalArgumentException("Something is wrong");
+				return;
+//				throw new IllegalArgumentException("Something is wrong");
 			}
 			getNextGap();
 
