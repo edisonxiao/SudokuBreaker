@@ -4,17 +4,22 @@ import java.util.*;
 
 public class SudokuBreaker {
 
-	int[][] grid; // [r][c]
+	Integer[][] grid; // [r][c]
+	Integer[][] prevGrid;
 	ArrayList<HashSet<Integer>> numUniverse;
 	int currRow = 0;
 	int currCol = 0;
 	int iterations = 0;
 	Integer[] FULLSET = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	Stack<Integer[]> attemptedElements;
+	Stack<HashMap<Integer[][], ArrayList<HashSet<Integer>>>> snapshots;
 
 	private void init() { // init variables
 		getInput();
 		printGrid();
 		numUniverse = new ArrayList<HashSet<Integer>>();
+		attemptedElements = new Stack<Integer[]>();
+		snapshots = new Stack<HashMap<Integer[][], ArrayList<HashSet<Integer>>>>();
 		for (int i = 0; i < 81; i++) {
 			HashSet<Integer> seed = new HashSet<Integer>();
 			if (grid[getCoordinate(i)[0]][getCoordinate(i)[1]] == 0) {
@@ -46,13 +51,17 @@ public class SudokuBreaker {
 	}
 
 	private void solve() {
+		prevGrid = cloneGrid(grid);
 		exclusionAlgo();
 		System.out.printf("iteration %d Exclusion:\n", iterations);
 		printGrid();
 		outcastAlgo();
 		System.out.printf("iteration %d Outcast:\n", iterations);
-
 		printGrid();
+		if (!isGridChange()) {
+			trialAndErrorSolver();
+			System.out.println("backtracked");
+		}
 	}
 
 	private void exclusionAlgo() {
@@ -85,16 +94,16 @@ public class SudokuBreaker {
 		}
 
 		// col outcast
-		 for (int c = 0; c < 9; c ++){
-		 colOutcast(c);
-		 }
+		for (int c = 0; c < 9; c++) {
+			colOutcast(c);
+		}
 
 		// block outcast
-		 for (int r = 0; r < 3; r ++){
-			 for (int c = 0; c < 3; c ++){
-				 blockOutcast(3 * r, 3 * c);
-			 }
-		 }
+		for (int r = 0; r < 3; r++) {
+			for (int c = 0; c < 3; c++) {
+				blockOutcast(3 * r, 3 * c);
+			}
+		}
 	}
 
 	private void rowOutcast(int row) {
@@ -112,7 +121,7 @@ public class SudokuBreaker {
 				}
 			}
 		}
-		
+
 		deductElementFromCounter(counter);
 	}
 
@@ -139,22 +148,25 @@ public class SudokuBreaker {
 		for (int r = 0; r < 3; r++) {
 			for (int c = 0; c < 3; c++) {
 				if (grid[startRow + r][startCol + c] == 0) {
-					for (Integer n : numUniverse.get(getSeqNum(startRow + r, startCol + c))) {
+					for (Integer n : numUniverse.get(getSeqNum(startRow + r,
+							startCol + c))) {
 						// create entry if there isn't one
 						if (!counter.keySet().contains(n)) {
 							ArrayList<Integer> seqNumList = new ArrayList<Integer>();
 							counter.put(n, seqNumList);
 						}
 						// add seqNum
-						counter.get(n).add(getSeqNum(startRow + r, startCol + c));
+						counter.get(n).add(
+								getSeqNum(startRow + r, startCol + c));
 					}
 				}
 			}
 		}
 		deductElementFromCounter(counter);
 	}
-	
-	private void deductElementFromCounter(HashMap<Integer, ArrayList<Integer>> counter){
+
+	private void deductElementFromCounter(
+			HashMap<Integer, ArrayList<Integer>> counter) {
 		for (Integer n : counter.keySet()) {
 			// the outcast
 			if (counter.get(n).size() == 1) {
@@ -162,7 +174,42 @@ public class SudokuBreaker {
 				grid[coordinate[0]][coordinate[1]] = n;
 				cleanNumUniverse(coordinate[0], coordinate[1], n);
 			}
-		}	
+		}
+	}
+
+	private void trialAndErrorSolver() {
+		// add snapshot to stack
+		HashMap<Integer[][], ArrayList<HashSet<Integer>>> ss = new HashMap<Integer[][], ArrayList<HashSet<Integer>>>();
+		ss.put(cloneGrid(grid), cloneNumUniv(numUniverse));
+		snapshots.push(ss);
+		// add attempted ele to stack
+		Integer[] ae = findElementForTrialAndError(numUniverse);
+		attemptedElements.push(ae);
+		int row = ae[0] / 9;
+		int col = ae[1] % 9;
+		grid[row][col] = ae[1];
+		cleanNumUniverse(row, col, ae[1]);
+	}
+
+		//{seqNum, element}
+	private Integer[] findElementForTrialAndError(ArrayList<HashSet<Integer>> myNumUniv) {
+		int minSize = 10;
+		for (int i = 0; i < 81; i ++) {
+			if(myNumUniv.get(i).size() != 0 && myNumUniv.get(i).size() < minSize){
+				minSize = myNumUniv.get(i).size();
+			}
+		}
+		Integer[] ret = new Integer[2];
+		for (int i = 0; i < 81; i ++){
+			if(myNumUniv.get(i).size() == minSize){
+				ret[0] = i;
+				for (Integer n:myNumUniv.get(i)){
+					ret[1] = n;
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 
 	private HashSet<Integer> getRow(int row) {
@@ -239,7 +286,7 @@ public class SudokuBreaker {
 	private void cleanNumUniverse(int row, int col, Integer element) {
 		// clean row
 		for (int c = 0; c < 9; c++) {
-			if (c == col){
+			if (c == col) {
 				continue;
 			}
 			if (grid[row][c] == 0) {
@@ -249,7 +296,7 @@ public class SudokuBreaker {
 
 		// clean col
 		for (int r = 0; r < 9; r++) {
-			if (r == row){
+			if (r == row) {
 				continue;
 			}
 			if (grid[r][col] == 0) {
@@ -271,8 +318,38 @@ public class SudokuBreaker {
 
 	}
 
+	private Integer[][] cloneGrid(Integer[][] g1) {
+		Integer[][] ret = new Integer[9][9];
+		for (int r = 0; r < 9; r++) {
+			for (int c = 0; c < 9; c++) {
+				ret[r][c] = g1[r][c];
+			}
+		}
+		return ret;
+	}
+	
+	private ArrayList<HashSet<Integer>> cloneNumUniv(ArrayList<HashSet<Integer>> numUniv){
+		ArrayList<HashSet<Integer>> ret = new ArrayList<HashSet<Integer>>();
+		for(HashSet<Integer> univ:numUniv){
+			ret.add((HashSet<Integer>)univ.clone());
+		}
+		return ret;
+	}
+	
+
+	private boolean isGridChange() {
+		for (int r = 0; r < 9; r++) {
+			for (int c = 0; c < 9; c++) {
+				if (grid[r][c] != prevGrid[r][c]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private void printGrid() {
-//		System.out.printf("iteration %d:\n", iterations);
+		// System.out.printf("iteration %d:\n", iterations);
 		for (int r = 0; r < 9; r++) {
 			if (r % 3 == 0) {
 				System.out.println("----------------------");
@@ -292,7 +369,7 @@ public class SudokuBreaker {
 	}
 
 	private void getInput() {
-		int[][] input = new int[9][9];
+		Integer[][] input = new Integer[9][9];
 
 		Scanner sc = new Scanner(System.in);
 		System.out
