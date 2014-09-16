@@ -8,6 +8,7 @@ One of the main advantage of EX SudokuBreaker is that it gives you a step-by ste
 As an example, copy and paste the following Sudoku into the console, and hit 'd':
 
 090006005
+
 800005002
 108500000
 000070000
