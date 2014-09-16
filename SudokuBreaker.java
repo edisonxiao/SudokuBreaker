@@ -15,6 +15,7 @@ public class SudokuBreaker {
 	Stack<HashMap<Integer[][], ArrayList<HashSet<Integer>>>> snapshots;
 
 	private void init() { // init variables
+		System.out.println("Hello Stranger. Thanks for using EX Sudoku Solver.");
 		getInput();
 		System.out.println("Initial grid:");
 		printGrid();
@@ -402,19 +403,74 @@ public class SudokuBreaker {
 
 		Scanner sc = new Scanner(System.in);
 		System.out
-				.println("Please enter the numbers in a row. Use zero to represent gaps. Do not put anything between numbers. \nHit Enter when finish one row. After finishing all the rows, type q, and then press enter");
+				.println("Please enter the numbers in a row. Use zero to represent gaps. Do not put anything between numbers. \nHit Enter after finishing one row.\nd - if you finished inputting the entire Sudoku. \nr - if you want to retype the previous row.");
 		int row = 0;
 		while (sc.hasNext()) {
 			String rowNum = sc.next();
-			if (rowNum.equals("q")) {
+			if (rowNum.equalsIgnoreCase("d")) {
 				break;
 			}
+			if (rowNum.equalsIgnoreCase("r")){
+				row--;
+				continue;
+			}
+			if (rowNum.length() != 9){
+				System.out.println("Please input 9 digits at a time, and then press enter.");
+				continue;
+			}
 			for (int i = 0; i < 9; i++) {
-				input[row][i] = Integer.parseInt(rowNum.substring(i, i + 1));
+				String digit = rowNum.substring(i, i + 1);
+				if (isInteger(digit)){
+					input[row][i] = Integer.parseInt(digit);
+				}
+				else{
+					System.out.println("Please only use numbers. Type in this row again");
+					row --;
+					break;
+				}
 			}
 			row++;
 		}
 		grid = input;
+		printGrid();
+		System.out.println("Is this the Sudoku you intended to input? If so, press y and hit enter. Otherwise press n");
+		while (sc.hasNext()){
+			String response = sc.next();
+			if (response.equalsIgnoreCase("y")){
+				return;
+			}
+			else if(response.equalsIgnoreCase("n")){
+				getInput();
+				break;
+			}
+			else{
+				System.out.println("Please enter 'y' or 'n'");
+			}
+		}
+	}
+	
+	private static boolean isInteger(String str) {
+		if (str == null) {
+			return false;
+		}
+		int length = str.length();
+		if (length == 0) {
+			return false;
+		}
+		int i = 0;
+		if (str.charAt(0) == '-') {
+			if (length == 1) {
+				return false;
+			}
+			i = 1;
+		}
+		for (; i < length; i++) {
+			char c = str.charAt(i);
+			if (c <= '/' || c >= ':') {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static void main(String args[]) {
