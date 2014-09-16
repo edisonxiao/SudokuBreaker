@@ -42,7 +42,7 @@ public class SudokuBreaker {
 		numUniverse = new ArrayList<HashSet<Integer>>();
 		attemptedElements = new Stack<Integer[]>();
 		snapshots = new Stack<HashMap<Integer[][], ArrayList<HashSet<Integer>>>>();
-		for (int i = 0; i < 81; i++) {
+		for (int i = 0; i < 81; i ++) {
 			HashSet<Integer> seed = new HashSet<Integer>();
 			if (grid[getCoordinate(i)[0]][getCoordinate(i)[1]] == 0) {
 				seed.addAll(Arrays.asList(FULLSET));
@@ -55,15 +55,15 @@ public class SudokuBreaker {
 		while (!isFinished()) {
 			currRow = 0;
 			currCol = -1;
-			iterations++;
+			iterations ++;
 			solve();
 		}
 		System.out.printf("Sudoku solved after %d iterations!\n", iterations);
 	}
 
 	public boolean isFinished() {
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
+		for (int i = 0; i < 9; i ++) {
+			for (int j = 0; j < 9; j ++) {
 				if (grid[i][j] == 0) {
 					return false;
 				}
@@ -112,18 +112,18 @@ public class SudokuBreaker {
 
 	private void outcastSolver() {
 		// row outcast
-		for (int r = 0; r < 9; r++) {
+		for (int r = 0; r < 9; r ++) {
 			rowOutcast(r);
 		}
 
 		// col outcast
-		for (int c = 0; c < 9; c++) {
+		for (int c = 0; c < 9; c ++) {
 			colOutcast(c);
 		}
 
 		// block outcast
-		for (int r = 0; r < 3; r++) {
-			for (int c = 0; c < 3; c++) {
+		for (int r = 0; r < 3; r ++) {
+			for (int c = 0; c < 3; c ++) {
 				blockOutcast(3 * r, 3 * c);
 			}
 		}
@@ -131,7 +131,7 @@ public class SudokuBreaker {
 
 	private void rowOutcast(int row) {
 		HashMap<Integer, ArrayList<Integer>> counter = new HashMap<Integer, ArrayList<Integer>>();
-		for (int c = 0; c < 9; c++) {
+		for (int c = 0; c < 9; c ++) {
 			if (grid[row][c] == 0) {
 				for (Integer n : numUniverse.get(getSeqNum(row, c))) {
 					// create entry if there isnt one
@@ -150,7 +150,7 @@ public class SudokuBreaker {
 
 	private void colOutcast(int col) {
 		HashMap<Integer, ArrayList<Integer>> counter = new HashMap<Integer, ArrayList<Integer>>();
-		for (int r = 0; r < 9; r++) {
+		for (int r = 0; r < 9; r ++) {
 			if (grid[r][col] == 0) {
 				for (Integer n : numUniverse.get(getSeqNum(r, col))) {
 					// create entry if there isn't one
@@ -168,8 +168,8 @@ public class SudokuBreaker {
 
 	private void blockOutcast(int startRow, int startCol) {
 		HashMap<Integer, ArrayList<Integer>> counter = new HashMap<Integer, ArrayList<Integer>>();
-		for (int r = 0; r < 3; r++) {
-			for (int c = 0; c < 3; c++) {
+		for (int r = 0; r < 3; r ++) {
+			for (int c = 0; c < 3; c ++) {
 				if (grid[startRow + r][startCol + c] == 0) {
 					for (Integer n : numUniverse.get(getSeqNum(startRow + r,
 							startCol + c))) {
@@ -235,7 +235,7 @@ public class SudokuBreaker {
 
 	private HashSet<Integer> getRow(int row) {
 		HashSet<Integer> rowSet = new HashSet<Integer>();
-		for (int c = 0; c < 9; c++) {
+		for (int c = 0; c < 9; c ++) {
 			int element = grid[row][c];
 			if (element != 0) {
 				rowSet.add(element);
@@ -246,7 +246,7 @@ public class SudokuBreaker {
 
 	private HashSet<Integer> getCol(int col) {
 		HashSet<Integer> colSet = new HashSet<Integer>();
-		for (int r = 0; r < 9; r++) {
+		for (int r = 0; r < 9; r ++) {
 			int element = grid[r][col];
 			if (element != 0) {
 				colSet.add(element);
@@ -259,8 +259,8 @@ public class SudokuBreaker {
 		HashSet<Integer> blockSet = new HashSet<Integer>();
 		int startRow = currRow - currRow % 3;
 		int startCol = currCol - currCol % 3;
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < 3; i ++) {
+			for (int j = 0; j < 3; j ++) {
 				int element = grid[startRow + i][startCol + j];
 				if (element != 0) {
 					blockSet.add(element);
@@ -273,8 +273,8 @@ public class SudokuBreaker {
 	private void getNextGap() {
 		int[] ret = new int[2];
 		int startCol = currCol + 1;
-		for (int r = currRow; r < 9; r++) {
-			for (int c = startCol; c < 9; c++) {
+		for (int r = currRow; r < 9; r ++) {
+			for (int c = startCol; c < 9; c ++) {
 				if (grid[r][c] == 0) {
 					ret[0] = r;
 					ret[1] = c;
@@ -306,7 +306,7 @@ public class SudokuBreaker {
 	}
 	private void cleanNumUniverse(int row, int col, Integer element) {
 		// clean row
-		for (int c = 0; c < 9; c++) {
+		for (int c = 0; c < 9; c ++) {
 			if (c == col) {
 				continue;
 			}
@@ -316,7 +316,7 @@ public class SudokuBreaker {
 		}
 
 		// clean col
-		for (int r = 0; r < 9; r++) {
+		for (int r = 0; r < 9; r ++) {
 			if (r == row) {
 				continue;
 			}
@@ -328,8 +328,8 @@ public class SudokuBreaker {
 		// clean block
 		int startRow = row - row % 3;
 		int startCol = col - col % 3;
-		for (int r = 0; r < 3; r++) {
-			for (int c = 0; c < 3; c++) {
+		for (int r = 0; r < 3; r ++) {
+			for (int c = 0; c < 3; c ++) {
 				if (grid[startRow + r][startCol + c] == 0) {
 					numUniverse.get(getSeqNum(startRow + r, startCol + c))
 							.remove(element);
@@ -347,8 +347,8 @@ public class SudokuBreaker {
 	}
 	
 	private void copyGrid(Integer[][] g1, Integer[][] g2){
-		for (int r = 0; r < 9; r++) {
-			for (int c = 0; c < 9; c++) {
+		for (int r = 0; r < 9; r ++) {
+			for (int c = 0; c < 9; c ++) {
 				g2[r][c] = g1[r][c];
 			}
 		}
@@ -364,8 +364,8 @@ public class SudokuBreaker {
 	
 
 	private boolean isGridChange() {
-		for (int r = 0; r < 9; r++) {
-			for (int c = 0; c < 9; c++) {
+		for (int r = 0; r < 9; r ++) {
+			for (int c = 0; c < 9; c ++) {
 				if (grid[r][c] != prevGrid[r][c]) {
 					return true;
 				}
@@ -394,11 +394,11 @@ public class SudokuBreaker {
 
 	private void printGrid() {
 		// System.out.printf("iteration %d:\n", iterations);
-		for (int r = 0; r < 9; r++) {
+		for (int r = 0; r < 9; r ++) {
 			if (r % 3 == 0) {
 				System.out.println("----------------------");
 			}
-			for (int c = 0; c < 9; c++) {
+			for (int c = 0; c < 9; c ++) {
 				if (c % 3 == 0) {
 					System.out.printf("|");
 				}
@@ -432,7 +432,7 @@ public class SudokuBreaker {
 				System.out.println("Please input 9 digits at a time, and then press enter.");
 				continue;
 			}
-			for (int i = 0; i < 9; i++) {
+			for (int i = 0; i < 9; i ++) {
 				String digit = rowNum.substring(i, i + 1);
 				if (isInteger(digit)){
 					input[row][i] = Integer.parseInt(digit);
@@ -443,7 +443,7 @@ public class SudokuBreaker {
 					break;
 				}
 			}
-			row++;
+			row ++;
 		}
 		grid = input;
 		printGrid();
@@ -479,7 +479,7 @@ public class SudokuBreaker {
 			}
 			i = 1;
 		}
-		for (; i < length; i++) {
+		for (; i < length; i ++) {
 			char c = str.charAt(i);
 			if (c <= '/' || c >= ':') {
 				return false;
@@ -489,8 +489,8 @@ public class SudokuBreaker {
 	}
 
 	public static void main(String args[]) {
-		SudokuBreaker SB = new SudokuBreaker();
-		SB.init();
-		SB.run();
+		SudokuBreaker sb = new SudokuBreaker();
+		sb.init();
+		sb.run();
 	}
 }
