@@ -16,6 +16,7 @@ public class SudokuBreaker {
 
 	private void init() { // init variables
 		getInput();
+		System.out.println("Initial grid:");
 		printGrid();
 		numUniverse = new ArrayList<HashSet<Integer>>();
 		attemptedElements = new Stack<Integer[]>();
@@ -52,19 +53,19 @@ public class SudokuBreaker {
 
 	private void solve() {
 		prevGrid = cloneGrid(grid);
-		exclusionAlgo();
+		exclusionSolver();
 		System.out.printf("iteration %d Exclusion:\n", iterations);
 		printGrid();
-		outcastAlgo();
+		outcastSolver();
 		System.out.printf("iteration %d Outcast:\n", iterations);
 		printGrid();
 		if (!isGridChange()) {
 			trialAndErrorSolver();
-			System.out.println("backtracked");
+			System.out.println("Using Trial and Error");
 		}
 	}
 
-	private void exclusionAlgo() {
+	private void exclusionSolver() {
 		getNextGap();
 		while (currCol != -1) {
 			numUniverse.get(getSeqNum(currRow, currCol)).removeAll(
@@ -75,24 +76,20 @@ public class SudokuBreaker {
 			if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 1) {
 				for (Integer n : numUniverse.get(getSeqNum(currRow, currCol))) {
 					setGridElementAtCoordinate(currRow, currCol, n);
-//					grid[currRow][currCol] = n;
-//					cleanNumUniverse(currRow, currCol, n);
 				}
 			}
 
 			else if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 0) {
-				System.out.println("reverse backtracking");
-				printGrid();
+				System.out.println("reverse Trial and Error");
 				reverse();
 				return;
-//				throw new IllegalArgumentException("Something is wrong");
 			}
 			getNextGap();
 
 		}
 	}
 
-	private void outcastAlgo() {
+	private void outcastSolver() {
 		// row outcast
 		for (int r = 0; r < 9; r++) {
 			rowOutcast(r);
@@ -194,8 +191,6 @@ public class SudokuBreaker {
 		int row = ae[0] / 9;
 		int col = ae[0] % 9;
 		setGridElementAtCoordinate(row, col, ae[1]);
-//		grid[row][col] = ae[1];
-//		cleanNumUniverse(row, col, ae[1]);
 	}
 
 		//{seqNum, element}
@@ -365,7 +360,15 @@ public class SudokuBreaker {
 	}
 	
 	private void reverse(){
-		HashMap<Integer[][], ArrayList<HashSet<Integer>>> ss = snapshots.pop();
+		HashMap<Integer[][], ArrayList<HashSet<Integer>>> ss = new HashMap<Integer[][], ArrayList<HashSet<Integer>>>(); 
+		try{
+		ss = snapshots.pop();
+		}
+		catch (EmptyStackException e)
+		{
+			System.err.println("The Sudoku is unsolvable, or you made a mistake typing it in");
+			System.exit(0);
+		}
 		Integer[] ae = attemptedElements.pop();
 		for(Integer[][] myGrid : ss.keySet()){
 			copyGrid(myGrid, grid);
