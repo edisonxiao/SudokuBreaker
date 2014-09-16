@@ -80,8 +80,9 @@ public class SudokuBreaker {
 				}
 			}
 
-			if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 0) {
+			else if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 0) {
 				System.out.println("reverse backtracking");
+				printGrid();
 				reverse();
 				return;
 //				throw new IllegalArgumentException("Something is wrong");
@@ -191,7 +192,7 @@ public class SudokuBreaker {
 		Integer[] ae = findElementForTrialAndError(numUniverse);
 		attemptedElements.push(ae);
 		int row = ae[0] / 9;
-		int col = ae[1] % 9;
+		int col = ae[0] % 9;
 		setGridElementAtCoordinate(row, col, ae[1]);
 //		grid[row][col] = ae[1];
 //		cleanNumUniverse(row, col, ae[1]);
