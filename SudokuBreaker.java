@@ -1,4 +1,24 @@
-package fun;
+//  SudokuBreaker.java
+//
+//  Copyright (C) 2014 by Yingsheng Xiao
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 
 import java.util.*;
 
@@ -175,8 +195,6 @@ public class SudokuBreaker {
 			if (counter.get(n).size() == 1) {
 				int[] coordinate = getCoordinate(counter.get(n).get(0));
 				setGridElementAtCoordinate(coordinate[0], coordinate[1], n);
-//				grid[coordinate[0]][coordinate[1]] = n;
-//				cleanNumUniverse(coordinate[0], coordinate[1], n);
 			}
 		}
 	}
@@ -186,7 +204,7 @@ public class SudokuBreaker {
 		HashMap<Integer[][], ArrayList<HashSet<Integer>>> ss = new HashMap<Integer[][], ArrayList<HashSet<Integer>>>();
 		ss.put(cloneGrid(grid), cloneNumUniv(numUniverse));
 		snapshots.push(ss);
-		// add attempted ele to stack
+		// add attempted element to stack
 		Integer[] ae = findElementForTrialAndError(numUniverse);
 		attemptedElements.push(ae);
 		int row = ae[0] / 9;
@@ -269,10 +287,6 @@ public class SudokuBreaker {
 		}
 		currRow = 0;
 		currCol = -1;
-	}
-
-	private int getGridElementFromSeqNum(int seqNum) {
-		return grid[getCoordinate(seqNum)[0]][getCoordinate(seqNum)[1]];
 	}
 
 	private static int getSeqNum(int r, int c) {
@@ -449,6 +463,7 @@ public class SudokuBreaker {
 		}
 	}
 	
+	//http://stackoverflow.com/questions/237159/whats-the-best-way-to-check-to-see-if-a-string-represents-an-integer-in-java
 	private static boolean isInteger(String str) {
 		if (str == null) {
 			return false;
