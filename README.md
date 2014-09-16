@@ -18,3 +18,15 @@ As an example, copy and paste the following Sudoku into the console, and hit 'd'
 
 This Sudoku is one of the hardest you can find online. EX SudokuBreaker can give you a step-by-step breakdown of how the puzzle is
 solved.
+
+
+The following Sudoku is allegedly the most difficult Sudoku on earth (as of Aug 2010). Try solving it with EX SodukuBreaker:
+005300000
+800000020
+070010500
+400005300
+010070006
+003200080
+060500009
+004000030
+000009700
