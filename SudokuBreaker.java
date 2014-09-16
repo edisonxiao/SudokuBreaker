@@ -74,8 +74,9 @@ public class SudokuBreaker {
 			numUniverse.get(getSeqNum(currRow, currCol)).removeAll(getBlock());
 			if (numUniverse.get(getSeqNum(currRow, currCol)).size() == 1) {
 				for (Integer n : numUniverse.get(getSeqNum(currRow, currCol))) {
-					grid[currRow][currCol] = n;
-					cleanNumUniverse(currRow, currCol, n);
+					setGridElementAtCoordinate(currRow, currCol, n);
+//					grid[currRow][currCol] = n;
+//					cleanNumUniverse(currRow, currCol, n);
 				}
 			}
 
@@ -174,8 +175,9 @@ public class SudokuBreaker {
 			// the outcast
 			if (counter.get(n).size() == 1) {
 				int[] coordinate = getCoordinate(counter.get(n).get(0));
-				grid[coordinate[0]][coordinate[1]] = n;
-				cleanNumUniverse(coordinate[0], coordinate[1], n);
+				setGridElementAtCoordinate(coordinate[0], coordinate[1], n);
+//				grid[coordinate[0]][coordinate[1]] = n;
+//				cleanNumUniverse(coordinate[0], coordinate[1], n);
 			}
 		}
 	}
@@ -190,8 +192,9 @@ public class SudokuBreaker {
 		attemptedElements.push(ae);
 		int row = ae[0] / 9;
 		int col = ae[1] % 9;
-		grid[row][col] = ae[1];
-		cleanNumUniverse(row, col, ae[1]);
+		setGridElementAtCoordinate(row, col, ae[1]);
+//		grid[row][col] = ae[1];
+//		cleanNumUniverse(row, col, ae[1]);
 	}
 
 		//{seqNum, element}
@@ -286,6 +289,10 @@ public class SudokuBreaker {
 		return coordinate;
 	}
 
+	private void setGridElementAtCoordinate(int row, int col, Integer element){
+		grid[row][col] = element;
+		cleanNumUniverse(row, col, element);
+	}
 	private void cleanNumUniverse(int row, int col, Integer element) {
 		// clean row
 		for (int c = 0; c < 9; c++) {
@@ -318,7 +325,8 @@ public class SudokuBreaker {
 				}
 			}
 		}
-
+		// clean current block to null
+		numUniverse.get(getSeqNum(row, col)).removeAll(Arrays.asList(FULLSET));
 	}
 
 	private Integer[][] cloneGrid(Integer[][] g1) {
@@ -359,7 +367,7 @@ public class SudokuBreaker {
 		HashMap<Integer[][], ArrayList<HashSet<Integer>>> ss = snapshots.pop();
 		Integer[] ae = attemptedElements.pop();
 		for(Integer[][] myGrid : ss.keySet()){
-			copyGrid(grid, myGrid);
+			copyGrid(myGrid, grid);
 			ss.get(myGrid).get(ae[0]).remove(ae[1]);
 			numUniverse = ss.get(myGrid);
 		}
